@@ -1,13 +1,17 @@
 import pygame
 from package.traffic import Traffic, Car
+from package.stats import Statistics
+from random import random
 
 
 class Road:
-    def __init__(self, starting_pos, ending_pos):
+    def __init__(self, starting_pos, ending_pos, reward=None):
         starting_pos: tuple[int | float, int | float]
         ending_pos: tuple[int | float, int | float]
+        reward: float
         self.starting_pos = pygame.Vector2(starting_pos)
         self.ending_pos = pygame.Vector2(ending_pos)
+        self.reward = reward or random()*10
 
     def render(self, surface: pygame.Surface):
         pygame.draw.line(surface, '#555555', self.starting_pos, self.ending_pos, width=10)
@@ -16,7 +20,7 @@ class Road:
 
 
 class Path(Road):
-    def __init__(self, starting_pos, ending_pos):
+    def __init__(self, starting_pos, ending_pos, stats=None):
         starting_pos: tuple[int | float, int | float]
         ending_pos: tuple[int | float, int | float]
         super().__init__(starting_pos, ending_pos)
@@ -27,22 +31,28 @@ class Path(Road):
         self.__init_roads()
 
         self.traffic = Traffic(path=self)
+        self.stats = stats or Statistics()
 
     def __init_roads(self):
         p0 = self.starting_pos
         p1 = self.ending_pos
         spacing = (p1-p0)/4
         self.shift *= spacing.magnitude()
-        self.road1 = Road(p0+spacing, p0+spacing + self.shift)
-        self.road2 = Road(p0+spacing*2, p0+spacing*2 + self.shift)
-        self.road3 = Road(p0+spacing*3, p0+spacing*3 + self.shift)
+        self.road1 = Road(p0+spacing, p0+spacing + self.shift, reward=3)
+        self.road2 = Road(p0+spacing*2, p0+spacing*2 + self.shift, reward=5)
+        self.road3 = Road(p0+spacing*3, p0+spacing*3 + self.shift, reward=0)
 
     def summon_car_to_road_n(self, n):
         n: int
-        traffic: Traffic
+
+        def destroy_function():
+            # print('Destroyed !!')
+            print(self.stats)
+            self.stats.update(n, self)
+            self.traffic.add()
         road = (self.road1, self.road2, self.road3)[n-1]
         path = [self.starting_pos, road.starting_pos, road.ending_pos]
-        car = Car(self.starting_pos, path=path)
+        car = Car(self.starting_pos, path=path, traffic=self.traffic, run_when_destroyed=destroy_function)
         self.traffic.append(car)
 
     def render(self, surface: pygame.Surface):
