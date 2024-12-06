@@ -3,7 +3,7 @@ import pygame
 
 
 class Car:
-    def __init__(self, pos, /, radius=10, *, path, color='#D55645') -> None:
+    def __init__(self, pos, /, radius=10, *, path, color='#D58635') -> None:
         pos: pygame.Vector2
         radius: int
         path: list[Coordinates, ...]
@@ -33,19 +33,3 @@ class Car:
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.circle(surface, color=self.color, center=self.pos, radius=self.radius)
 
-
-class Traffic(list):
-    def __init__(self, *args, **kwargs):
-        super().__init__(args)
-
-    def add(self, car: Car) -> None:
-        self.append(car)
-
-    def draw(self, surface: pygame.Surface):
-        for car in self:
-            car.draw(surface)
-
-    def update(self, dt):
-        dt: float
-        for car in self:
-            car.move(dt)
