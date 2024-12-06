@@ -26,7 +26,8 @@ class Counter:
 
 
 class Statistics:
-    def __init__(self):
+    def __init__(self, path=None):
+        self.path = path
         self.road1 = Counter()
         self.road2 = Counter()
         self.road3 = Counter()
@@ -58,5 +59,12 @@ class Statistics:
             return 0
         return self.total_reward / (self.road1.value + self.road2.value + self.road3.value)
 
+    @property
+    def expected_reward(self) -> float:
+        self.path: 'package.path.Path'  # NOQA
+        prob: float = self.path.traffic.prob
+        return self.path.road1.reward*prob + self.path.road2.reward*prob*(1-prob) + self.path.road3.reward*(1-prob)**2
+
     def __repr__(self):
-        return f'1: {self.road1:>3}, 2: {self.road2:>3}, 3: {self.road3:>3}  ({self.mean_reward = :.2f})'
+        return f'1: {self.road1:>3}, 2: {self.road2:>3}, 3: {self.road3:>3}'\
+            f'  ({self.mean_reward = :.2f}, {self.expected_reward = :.2f})'  # NOQA: E203

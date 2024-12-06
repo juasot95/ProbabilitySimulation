@@ -11,7 +11,10 @@ class Road:
         reward: float
         self.starting_pos = pygame.Vector2(starting_pos)
         self.ending_pos = pygame.Vector2(ending_pos)
-        self.reward = reward or random()*10
+        if reward is None:
+            self.reward = random()*10
+        else:
+            self.reward = reward
 
     def render(self, surface: pygame.Surface):
         pygame.draw.line(surface, '#555555', self.starting_pos, self.ending_pos, width=10)
@@ -31,7 +34,8 @@ class Path(Road):
         self.__init_roads()
 
         self.traffic = Traffic(path=self)
-        self.stats = stats or Statistics()
+        self.stats = stats or Statistics(self)
+        self.stats.__init__(self)
 
     def __init_roads(self):
         p0 = self.starting_pos

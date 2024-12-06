@@ -15,7 +15,7 @@ class Car:
         self.traffic = traffic
         self.color = color
 
-        self.speed = 1024  # pxl/s
+        self.speed = 300  # pxl/s
 
         self.destroy = destroy
         self.run_when_destroyed = run_when_destroyed
