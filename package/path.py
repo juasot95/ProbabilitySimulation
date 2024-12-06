@@ -33,7 +33,7 @@ class Path(Road):
         self.road1 = self.road2 = self.road3 = Road((0, 0), (0, 0))
         self.__init_roads()
 
-        self.traffic = Traffic(path=self)
+        self.traffic = Traffic(path=self, probability=0.6)
         self.stats = stats or Statistics(self)
         self.stats.__init__(self)
 
