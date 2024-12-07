@@ -1,4 +1,3 @@
-from package.utils import Coordinates
 import pygame
 
 
@@ -7,7 +6,7 @@ class Car:
                  color='#D58635', destroy=True, run_when_destroyed=lambda: 0) -> None:
         pos: pygame.Vector2
         radius: int
-        path: list[Coordinates, ...]
+        path: list[tuple[int, int], ...]
         color: str
         self.pos = pos
         self.radius = radius

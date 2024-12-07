@@ -52,7 +52,7 @@ class Path(Road):
 
         def destroy_function():
             # print('Destroyed !!')
-            print(self.stats)
+            # print(self.stats)
             self.stats.update(n, self)
             self.traffic.add()
         road = (self.road1, self.road2, self.road3)[n-1]

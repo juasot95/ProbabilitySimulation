@@ -6,10 +6,18 @@ import random
 class Traffic(list):
     def __init__(self, *args, path=None, probability=0.5):
         super().__init__(args)
-        self.prob = probability
+        self.__prob = probability
         if path is None:
             raise ValueError('The path parameter for the Traffic instance must be provided')
         self.path: "package.path.Path" = path  # NOQA
+
+    @property
+    def prob(self) -> float:
+        return self.__prob
+
+    @prob.setter
+    def prob(self, value):
+        self.__prob = value
 
     def add(self) -> None:
         p = random.random

@@ -1,5 +1,6 @@
 import pygame
-from package.utils import PercentText, RewardText, Text
+from package.utils.text import PercentText, RewardText, Text
+from package.utils.slider import Slider
 from package.path import Path
 from package.stats import Statistics
 
@@ -16,19 +17,24 @@ class Interface:
             self.path.traffic.add()
 
         # ___ -- Graphics Components -- ___
-        prob = self.path.traffic.prob
-        self.prob1_text = PercentText(prob)
-        self.prob2_text = PercentText(prob*(1-prob))
-        self.prob3_text = PercentText((1-prob)**2)
-        self.reward1_text = RewardText(self.path.road1.reward)
-        self.reward2_text = RewardText(self.path.road2.reward)
-        self.reward3_text = RewardText(self.path.road3.reward)
+        prob = lambda: self.path.traffic.prob
+
+        self.prob1_text = PercentText('{prob:.2%}', lambda: {'prob': prob()})
+        self.prob2_text = PercentText('{prob:.2%}', lambda: {'prob': prob()*(1-prob())})
+        self.prob3_text = PercentText('{prob:.2%}', lambda: {'prob': (1-prob())**2})
+
+        self.reward1_text = RewardText('{reward}', lambda: {'reward': self.path.road1.reward})
+        self.reward2_text = RewardText('{reward}', lambda: {'reward': self.path.road2.reward})
+        self.reward3_text = RewardText('{reward}', lambda: {'reward': self.path.road3.reward})
+
         self.mean_reward_text = Text('Mean Reward : {mean_reward:.2f}',
                                      lambda: {'mean_reward': self.stats.mean_reward})
         self.expected_reward_text = Text('Expected Reward : {expected_reward:.2f}',
                                          lambda: {'expected_reward': self.stats.expected_reward})
         self.probability_text = Text('Probability: {prob:.2%}',
                                      lambda: {'prob': self.path.traffic.prob})
+
+        self.slider = Slider(0, 0, 200, 40)
         self.__init_graphic_components()
 
     def __init_graphic_components(self):
@@ -59,11 +65,23 @@ class Interface:
         self.expected_reward_text.rect.topleft = pos
         pos = self.expected_reward_text.rect.bottomleft
         self.probability_text.rect.topleft = pos
+        # ___ -- Cursor -- ___
+        pos = self.probability_text.rect.bottomleft + pygame.Vector2(0, self.slider.rect.h)
+        self.slider.rect.topleft = pos
 
     def update_graphic_components(self):
+        self.prob1_text.update()
+        self.prob2_text.update()
+        self.prob3_text.update()
+
+        self.reward1_text.update()
+        self.reward2_text.update()
+        self.reward3_text.update()
+
         self.mean_reward_text.update()
         self.expected_reward_text.update()
         self.probability_text.update()
+        self.slider.update()
 
     def render_graphic_components(self):
         self.prob1_text.render(self.screen)
@@ -76,6 +94,9 @@ class Interface:
         self.mean_reward_text.render(self.screen)
         self.expected_reward_text.render(self.screen)
         self.probability_text.render(self.screen)
+
+        self.slider.render(self.screen)
+        self.path.traffic.prob = self.slider.value
 
     def update(self, dt):
         dt: float
