@@ -49,6 +49,8 @@ class Slider:
                 self.reset()
             return
         if not self.click:
+            if self.pressed:
+                self.reset()
             self.pressed = False
             return
         self.pressed = True

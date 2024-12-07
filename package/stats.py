@@ -26,6 +26,9 @@ class Counter:
 
 
 class Optimizer:
+    """
+    Source : https://www.desmos.com/calculator/ju7jv1zd4n?lang=fr
+    """
     def __init__(self, path=None):
         self.path = path
 
