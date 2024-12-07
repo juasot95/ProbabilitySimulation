@@ -20,6 +20,12 @@ class Traffic(list):
         # print(f'prob has been set to {value:.2f}')
         self.__prob = value
 
+    def reset(self):
+        num_cars = len(self)
+        self.clear()
+        for car in range(num_cars):
+            self.add()
+
     def add(self) -> None:
         p = random.random
         if p() < self.prob:

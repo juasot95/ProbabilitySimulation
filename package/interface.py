@@ -35,9 +35,9 @@ class Interface:
         self.probability_text = Text('Probability: {prob:.2%}',
                                      lambda: {'prob': self.path.traffic.prob})
 
-        self.slider = Slider(0, 0, 201, 40, value_getter=prob, reset_func=self.stats.reset)
-        self.max_button = MaxButton(0, 0, 100, 30, interface=self, trigger_func=self.stats.reset)
-        self.min_button = MinButton(0, 0, 100, 30, interface=self, trigger_func=self.stats.reset)
+        self.slider = Slider(0, 0, 201, 40, value_getter=prob, reset_func=self.reset_when_new_prob)
+        self.max_button = MaxButton(0, 0, 100, 30, interface=self, trigger_func=self.reset_when_new_prob)
+        self.min_button = MinButton(0, 0, 100, 30, interface=self, trigger_func=self.reset_when_new_prob)
         self.__init_graphic_components()
 
     def __init_graphic_components(self):
@@ -76,6 +76,10 @@ class Interface:
         self.max_button.rect.topleft = pos
         pos = self.slider.rect.bottomright + pygame.Vector2(0, self.slider.rect.h)
         self.min_button.rect.topright = pos
+
+    def reset_when_new_prob(self):
+        self.stats.reset()
+        self.path.traffic.reset()
 
     def update_graphic_components(self):
         self.max_button.update()
