@@ -23,7 +23,7 @@ class Road:
 
 
 class Path(Road):
-    def __init__(self, starting_pos, ending_pos, stats=None):
+    def __init__(self, starting_pos, ending_pos, stats=None, prob=0.5, speed=200):
         starting_pos: tuple[int | float, int | float]
         ending_pos: tuple[int | float, int | float]
         super().__init__(starting_pos, ending_pos)
@@ -33,9 +33,10 @@ class Path(Road):
         self.road1 = self.road2 = self.road3 = Road((0, 0), (0, 0))
         self.__init_roads()
 
-        self.traffic = Traffic(path=self, probability=0.6)
+        self.traffic = Traffic(path=self, probability=prob)
         self.stats = stats or Statistics(self)
         self.stats.__init__(self)
+        self.speed = speed
 
     def __init_roads(self):
         p0 = self.starting_pos
@@ -56,7 +57,8 @@ class Path(Road):
             self.traffic.add()
         road = (self.road1, self.road2, self.road3)[n-1]
         path = [self.starting_pos, road.starting_pos, road.ending_pos]
-        car = Car(self.starting_pos, path=path, traffic=self.traffic, run_when_destroyed=destroy_function)
+        car = Car(self.starting_pos, speed=self.speed, path=path,
+                  traffic=self.traffic, run_when_destroyed=destroy_function)
         self.traffic.append(car)
 
     def render(self, surface: pygame.Surface):

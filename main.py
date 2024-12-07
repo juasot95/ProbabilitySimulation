@@ -7,7 +7,7 @@ from package.interface import Interface
 print('starting program...')
 
 running = True
-interface = Interface()
+interface = Interface(50, 0.6, )
 
 t0 = time.time()
 dt = 0

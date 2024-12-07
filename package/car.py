@@ -3,7 +3,7 @@ import pygame
 
 
 class Car:
-    def __init__(self, pos, /, radius=10, *, path, traffic,
+    def __init__(self, pos, /, radius=10, speed=200, *, path, traffic,
                  color='#D58635', destroy=True, run_when_destroyed=lambda: 0) -> None:
         pos: pygame.Vector2
         radius: int
@@ -15,7 +15,7 @@ class Car:
         self.traffic = traffic
         self.color = color
 
-        self.speed = 1024  # pxl/s
+        self.speed = speed  # pxl/s
 
         self.destroy = destroy
         self.run_when_destroyed = run_when_destroyed

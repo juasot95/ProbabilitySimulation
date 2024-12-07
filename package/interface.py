@@ -1,56 +1,15 @@
 import pygame
+from package.utils import PercentText, RewardText, Text
 from package.path import Path
 from package.stats import Statistics
 
 
-class PercentText(pygame.sprite.Sprite):
-    def __init__(self, value: float, size=24):
-        super().__init__()
-        self.value = value
-        self.font = pygame.font.Font(None, size)
-        self.color = '#BBBBBB'
-        self.image = self.font.render(f'{self.value:.2%}', 1, self.color)
-        self.rect = self.image.get_rect()
-
-    def update(self, value):
-        if value is None:
-            return
-        if value != self.value:
-            self.value = value
-            self.image = self.font.render(f'{self.value:.2%}', 1, self.color)
-            self.rect = self.image.get_rect()
-
-    def render(self, surface: pygame.Surface):
-        surface.blit(self.image, self.rect)
-
-
-class RewardText(pygame.sprite.Sprite):
-    def __init__(self, value: float, size=36):
-        super().__init__()
-        self.value = value
-        self.font = pygame.font.Font(None, size)
-        self.color = '#BBEEBB'
-        self.image = self.font.render(f'{self.value}', 1, self.color)
-        self.rect = self.image.get_rect()
-
-    def update(self, value):
-        if value is None:
-            return
-        if value != self.value:
-            self.value = value
-            self.image = self.font.render(f'{self.value}', 1, self.color)
-            self.rect = self.image.get_rect()
-
-    def render(self, surface: pygame.Surface):
-        surface.blit(self.image, self.rect)
-
-
 class Interface:
-    def __init__(self):
+    def __init__(self, n=1, prob=0.5, speed=200):
         self.stats = Statistics()
         self.screen = pygame.display.set_mode((720, 480))
-        self.path = Path((200, 75), (200, 425), stats=self.stats)
-        for i in ' '*50:
+        self.path = Path((200, 75), (200, 425), stats=self.stats, prob=prob, speed=speed)
+        for i in range(n):
             self.path.traffic.add()
         # ___ -- Graphics Components -- ___
         prob = self.path.traffic.prob
@@ -60,6 +19,12 @@ class Interface:
         self.reward1_text = RewardText(self.path.road1.reward)
         self.reward2_text = RewardText(self.path.road2.reward)
         self.reward3_text = RewardText(self.path.road3.reward)
+        self.mean_reward_text = Text('Mean Reward : {mean_reward:.2f}',
+                                     lambda: {'mean_reward': self.stats.mean_reward})
+        self.expected_reward_text = Text('Expected Reward : {expected_reward:.2f}',
+                                         lambda: {'expected_reward': self.stats.expected_reward})
+        self.probability_text = Text('Probability: {prob:.2%}',
+                                     lambda: {'prob': self.path.traffic.prob})
         self.__init_graphic_components()
 
     def __init_graphic_components(self):
@@ -83,10 +48,18 @@ class Interface:
         self.reward2_text.rect.center = pos
         pos = p0 + spacing*3 + self.shift
         self.reward3_text.rect.center = pos
+        # ___ -- Graphic Values -- ___
+        pos = p0 + self.shift + pygame.Vector2(shift.x + 30, 0)
+        self.mean_reward_text.rect.midleft = pos
+        pos = self.mean_reward_text.rect.bottomleft
+        self.expected_reward_text.rect.topleft = pos
+        pos = self.expected_reward_text.rect.bottomleft
+        self.probability_text.rect.topleft = pos
 
-    def update(self, dt):
-        dt: float
-        self.path.update(dt)
+    def update_graphic_components(self):
+        self.mean_reward_text.update()
+        self.expected_reward_text.update()
+        self.probability_text.update()
 
     def render_graphic_components(self):
         self.prob1_text.render(self.screen)
@@ -95,6 +68,15 @@ class Interface:
         self.reward1_text.render(self.screen)
         self.reward2_text.render(self.screen)
         self.reward3_text.render(self.screen)
+
+        self.mean_reward_text.render(self.screen)
+        self.expected_reward_text.render(self.screen)
+        self.probability_text.render(self.screen)
+
+    def update(self, dt):
+        dt: float
+        self.path.update(dt)
+        self.update_graphic_components()
 
     def render(self):
         self.path.render(self.screen)
