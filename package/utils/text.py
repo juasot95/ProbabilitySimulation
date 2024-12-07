@@ -33,7 +33,7 @@ class Text(pygame.sprite.Sprite):
 
 
 class PercentText(Text):
-    def __init__(self, *args, color='#BBBBBB', size=24, **kwargs):
+    def __init__(self, *args, color='#C6C6C6', size=24, **kwargs):
         Text.__init__(self, *args, size=size, **kwargs)
         self.color = color
 

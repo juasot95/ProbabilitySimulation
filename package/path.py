@@ -74,4 +74,5 @@ class Path(Road):
     def update(self, dt):
         dt: float
         self.traffic.update(dt)
+        # print(self.traffic.prob)
 

@@ -1,6 +1,7 @@
 import pygame
 from package.utils.text import PercentText, RewardText, Text
 from package.utils.slider import Slider
+from package.utils.button import MaxButton, MinButton
 from package.path import Path
 from package.stats import Statistics
 
@@ -17,7 +18,7 @@ class Interface:
             self.path.traffic.add()
 
         # ___ -- Graphics Components -- ___
-        prob = lambda: self.path.traffic.prob
+        prob = lambda: self.path.traffic.prob  # NOQA : E731
 
         self.prob1_text = PercentText('{prob:.2%}', lambda: {'prob': prob()})
         self.prob2_text = PercentText('{prob:.2%}', lambda: {'prob': prob()*(1-prob())})
@@ -34,7 +35,9 @@ class Interface:
         self.probability_text = Text('Probability: {prob:.2%}',
                                      lambda: {'prob': self.path.traffic.prob})
 
-        self.slider = Slider(0, 0, 200, 40)
+        self.slider = Slider(0, 0, 201, 40, value_getter=prob, reset_func=self.stats.reset)
+        self.max_button = MaxButton(0, 0, 100, 30, interface=self)
+        self.min_button = MinButton(0, 0, 100, 30, interface=self)
         self.__init_graphic_components()
 
     def __init_graphic_components(self):
@@ -68,8 +71,16 @@ class Interface:
         # ___ -- Cursor -- ___
         pos = self.probability_text.rect.bottomleft + pygame.Vector2(0, self.slider.rect.h)
         self.slider.rect.topleft = pos
+        # ___ -- Buttons -- ___
+        pos = self.slider.rect.bottomleft + pygame.Vector2(0, self.slider.rect.h)
+        self.max_button.rect.topleft = pos
+        pos = self.slider.rect.bottomright + pygame.Vector2(0, self.slider.rect.h)
+        self.min_button.rect.topright = pos
 
     def update_graphic_components(self):
+        self.max_button.update()
+        self.min_button.update()
+
         self.prob1_text.update()
         self.prob2_text.update()
         self.prob3_text.update()
@@ -97,6 +108,9 @@ class Interface:
 
         self.slider.render(self.screen)
         self.path.traffic.prob = self.slider.value
+
+        self.max_button.render(self.screen)
+        self.min_button.render(self.screen)
 
     def update(self, dt):
         dt: float

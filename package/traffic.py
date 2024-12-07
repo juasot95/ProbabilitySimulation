@@ -17,6 +17,7 @@ class Traffic(list):
 
     @prob.setter
     def prob(self, value):
+        # print(f'prob has been set to {value:.2f}')
         self.__prob = value
 
     def add(self) -> None:
