@@ -3,7 +3,7 @@ from package.utils.text import Text
 
 
 class Button:
-    def __init__(self, x, y, w, h, interface, color='#454545'):
+    def __init__(self, x, y, w, h, interface, color='#454545', trigger_func=lambda: None):
         interface: 'package.interface.Interface'  # NOQA
         self.interface = interface
         self.path = self.interface.path
@@ -12,6 +12,7 @@ class Button:
         self.rect = pygame.Rect(x, y, w, h)
         self.color = color
         self.pressed = False
+        self.trigger_func = trigger_func
 
     def set_prob(self, prob):
         self.path: 'package.path.Path'  # NOQA
@@ -27,6 +28,8 @@ class Button:
         return pygame.mouse.get_pressed()[0]
 
     def update(self):
+        if self.pressed and not self.click:
+            self.trigger_func()
         if self.click and self.mouse_on:
             self.pressed = True
         else:
