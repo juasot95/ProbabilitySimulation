@@ -1,4 +1,5 @@
 import pygame
+from package.utils.text import Text
 
 
 class Button:
@@ -38,23 +39,37 @@ class Button:
 class MaxButton(Button):
     def __init__(self, *args, color='#458545', **kwargs):
         Button.__init__(self, *args, color=color, **kwargs)
+        self.text = Text('MAX')
 
     def update(self):
         if self.pressed and not self.click:
             # print('Max !!')
             self.path.traffic.prob = float(self.optimizer.p_max)
         Button.update(self)
+        self.text.rect.center = self.rect.center
+
+    def render(self, surface: pygame.Surface):
+        Button.render(self, surface)
+        self.text.render(surface)
 
 
 class MinButton(Button):
     def __init__(self, *args, color='#854545', **kwargs):
         Button.__init__(self, *args, color=color, **kwargs)
+        self.text = Text('MIN')
 
     def update(self):
         if self.pressed and not self.click:
             # print('Min !!')
             self.path.traffic.prob = float(self.optimizer.p_min)
         Button.update(self)
+        self.text.rect.center = self.rect.center
+
+    def render(self, surface: pygame.Surface):
+        Button.render(self, surface)
+        self.text.render(surface)
+
+
 
 
 
