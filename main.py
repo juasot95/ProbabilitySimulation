@@ -7,7 +7,7 @@ from package.interface import Interface
 print('starting program...')
 
 running = True
-interface = Interface(50, 0.6, )
+interface = Interface(50, 0.6, rewards=(3, 5, 0))
 
 t0 = time.time()
 dt = 0

@@ -5,13 +5,12 @@ from package.stats import Statistics
 
 
 class Interface:
-    def __init__(self, n=1, prob=0.5, speed=200):
+    def __init__(self, n=1, prob=0.5, speed=200, rewards=(3, 5, 0)):
         self.stats = Statistics()
         self.screen = pygame.display.set_mode((720, 480))
-        self.path = Path((200, 75), (200, 425), stats=self.stats, prob=prob, speed=speed)
+        self.path = Path((200, 75), (200, 425),
+                         stats=self.stats, prob=prob, speed=speed, rewards=rewards)
         self.stats.__init__(path=self.path)  # bind the Path with the Stat instance
-        print(self.stats.optimizer.p_extremum)
-        self.path.traffic.prob = self.stats.optimizer.p_max
 
         for i in range(n):
             self.path.traffic.add()

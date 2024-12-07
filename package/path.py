@@ -23,7 +23,7 @@ class Road:
 
 
 class Path(Road):
-    def __init__(self, starting_pos, ending_pos, stats=None, prob=0.5, speed=200):
+    def __init__(self, starting_pos, ending_pos, stats=None, prob=0.5, speed=200, rewards=(3, 5, 0)):
         starting_pos: tuple[int | float, int | float]
         ending_pos: tuple[int | float, int | float]
         super().__init__(starting_pos, ending_pos)
@@ -31,21 +31,21 @@ class Path(Road):
         self.shift = pygame.Vector2(1, .5)
 
         self.road1 = self.road2 = self.road3 = Road((0, 0), (0, 0))
-        self.__init_roads()
+        self.__init_roads(rewards)
 
         self.traffic = Traffic(path=self, probability=prob)
         self.stats = stats or Statistics(self)
         self.stats.__init__(self)
         self.speed = speed
 
-    def __init_roads(self):
+    def __init_roads(self, rewards=(3, 5, 0)):
         p0 = self.starting_pos
         p1 = self.ending_pos
         spacing = (p1-p0)/4
         self.shift *= spacing.magnitude()
-        self.road1 = Road(p0+spacing, p0+spacing + self.shift, reward=3)
-        self.road2 = Road(p0+spacing*2, p0+spacing*2 + self.shift, reward=5)
-        self.road3 = Road(p0+spacing*3, p0+spacing*3 + self.shift, reward=0)
+        self.road1 = Road(p0+spacing, p0+spacing + self.shift, reward=rewards[0])
+        self.road2 = Road(p0+spacing*2, p0+spacing*2 + self.shift, reward=rewards[1])
+        self.road3 = Road(p0+spacing*3, p0+spacing*3 + self.shift, reward=rewards[2])
 
     def summon_car_to_road_n(self, n):
         n: int
