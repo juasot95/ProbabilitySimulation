@@ -4,7 +4,7 @@ import random
 
 
 class Traffic(list):
-    def __init__(self, *args, path=None, probability=0.5, **kwargs):
+    def __init__(self, *args, path=None, probability=0.5):
         super().__init__(args)
         self.prob = probability
         if path is None:

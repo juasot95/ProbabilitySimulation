@@ -9,8 +9,13 @@ class Interface:
         self.stats = Statistics()
         self.screen = pygame.display.set_mode((720, 480))
         self.path = Path((200, 75), (200, 425), stats=self.stats, prob=prob, speed=speed)
+        self.stats.__init__(path=self.path)  # bind the Path with the Stat instance
+        print(self.stats.optimizer.p_extremum)
+        self.path.traffic.prob = self.stats.optimizer.p_max
+
         for i in range(n):
             self.path.traffic.add()
+
         # ___ -- Graphics Components -- ___
         prob = self.path.traffic.prob
         self.prob1_text = PercentText(prob)
