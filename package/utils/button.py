@@ -73,6 +73,35 @@ class MinButton(Button):
         self.text.render(surface)
 
 
+class RewardButton:
+    def __init__(self, x, y, radius, interface, color='#454545', trigger_func=lambda: None):
+        self.interface = interface
+        self.trigger_func = trigger_func
+        self.pressed = False
 
+        self.pos = pygame.Vector2(x, y)
+        self.radius = radius
+        self.color = color
 
+    @property
+    def mouse_rel_pos(self) -> pygame.Vector2:
+        return pygame.Vector2(pygame.mouse.get_pos()) - self.pos
 
+    @property
+    def mouse_on(self) -> bool:
+        return self.mouse_rel_pos.magnitude() < self.radius
+
+    @property
+    def click(self) -> bool:
+        return pygame.mouse.get_pressed()[0]
+
+    def update(self):
+        if self.pressed and not self.click:
+            self.trigger_func()
+        if self.click and self.mouse_on:
+            self.pressed = True
+        else:
+            self.pressed = False
+
+    def render(self, surface: pygame.Surface):
+        pygame.draw.circle(surface, self.color, self.pos, self.radius)

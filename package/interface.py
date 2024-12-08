@@ -1,7 +1,7 @@
 import pygame
 from package.utils.text import PercentText, RewardText, Text
 from package.utils.slider import Slider
-from package.utils.button import MaxButton, MinButton
+from package.utils.button import MaxButton, MinButton, RewardButton
 from package.path import Path
 from package.stats import Statistics
 
@@ -38,7 +38,33 @@ class Interface:
         self.slider = Slider(0, 0, 201, 40, value_getter=prob, reset_func=self.reset_when_new_prob)
         self.max_button = MaxButton(0, 0, 100, 30, interface=self, trigger_func=self.reset_when_new_prob)
         self.min_button = MinButton(0, 0, 100, 30, interface=self, trigger_func=self.reset_when_new_prob)
+
+        self.reward1_button = RewardButton(0, 0, 20, self, trigger_func=lambda: print('REWARD BUTTON !!'))
+        self.reward2_button = RewardButton(0, 0, 20, self, trigger_func=lambda: print('REWARD BUTTON !!'))
+        self.reward3_button = RewardButton(0, 0, 20, self, trigger_func=lambda: print('REWARD BUTTON !!'))
+        self.__init_reward_buttons()
         self.__init_graphic_components()
+
+    def __init_reward_buttons(self):
+        road1 = self.path.road1
+        road2 = self.path.road2
+        road3 = self.path.road3
+
+        def reward1_modify():
+            road1.__setattr__('reward', (road1.__getattribute__('reward') + 1) % 10)
+            self.reset_when_new_prob()
+
+        def reward2_modify():
+            road2.__setattr__('reward', (road2.__getattribute__('reward') + 1) % 10)
+            self.reset_when_new_prob()
+
+        def reward3_modify():
+            road3.__setattr__('reward', (road3.__getattribute__('reward') + 1) % 10)
+            self.reset_when_new_prob()
+
+        self.reward1_button.__init__(0, 0, 20, self, trigger_func=reward1_modify)
+        self.reward2_button.__init__(0, 0, 20, self, trigger_func=reward2_modify)
+        self.reward3_button.__init__(0, 0, 20, self, trigger_func=reward3_modify)
 
     def __init_graphic_components(self):
         shift = self.shift = pygame.Vector2(1, .5)
@@ -71,11 +97,18 @@ class Interface:
         # ___ -- Cursor -- ___
         pos = self.probability_text.rect.bottomleft + pygame.Vector2(0, self.slider.rect.h)
         self.slider.rect.topleft = pos
-        # ___ -- Buttons -- ___
+        # ___ -- MinMax Buttons -- ___
         pos = self.slider.rect.bottomleft + pygame.Vector2(0, self.slider.rect.h)
         self.max_button.rect.topleft = pos
         pos = self.slider.rect.bottomright + pygame.Vector2(0, self.slider.rect.h)
         self.min_button.rect.topright = pos
+        # ___ -- Reward Button -- ___
+        pos = p0 + spacing + self.shift
+        self.reward1_button.pos = pos
+        pos = pos = p0 + spacing*2 + self.shift
+        self.reward2_button.pos = pos
+        pos = p0 + spacing * 3 + self.shift
+        self.reward3_button.pos = pos
 
     def reset_when_new_prob(self):
         self.stats.reset()
@@ -84,6 +117,9 @@ class Interface:
     def update_graphic_components(self):
         self.max_button.update()
         self.min_button.update()
+        self.reward1_button.update()
+        self.reward2_button.update()
+        self.reward3_button.update()
 
         self.prob1_text.update()
         self.prob2_text.update()
@@ -115,6 +151,9 @@ class Interface:
 
         self.max_button.render(self.screen)
         self.min_button.render(self.screen)
+        # self.reward1_button.render(self.screen)
+        # self.reward2_button.render(self.screen)
+        # self.reward3_button.render(self.screen)
 
     def update(self, dt):
         dt: float
